@@ -1,0 +1,13 @@
+{
+  "name": "find-important-words",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "jest": "^27.0.4"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
