@@ -6,7 +6,7 @@ jest.mock("../src/utils/logger")
 describe("App setup",() => {
 
     it("should start if the text argument is provided", () => {
-        process.argv = ["--text", "a text example"]
+        process.argv = ["node", "src/index","--text", "a text example"]
         app()
         expect(Logger.log).toHaveBeenCalled()
     })
@@ -15,6 +15,7 @@ describe("App setup",() => {
         process.argv = []
         app()
         expect(Logger.error).toHaveBeenCalled()
+        expect(Logger.log).not.toHaveBeenCalled()
     })
 
 })

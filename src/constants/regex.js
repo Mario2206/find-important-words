@@ -1,0 +1,1 @@
+exports.FLAG_REGEXP = new RegExp("^--")

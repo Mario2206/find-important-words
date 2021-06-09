@@ -1,4 +1,4 @@
-const generateDictionaryOfWords = require('.')
+const generateDictionaryOfWords = require('../../src/utils/dictionary')
 describe('Dictionary Generator', () => {
 
     it('should generate a dictionary of words with their quantities', () => {
