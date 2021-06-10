@@ -1,6 +1,8 @@
+const { SPECIAL_CHARS_REGEXP, BREAK_LINE_REGEXP } = require("../constants/regex")
+
 function generateDictionaryOfWords(text, existingDico = []) {
-    const words = text.replaceAll("\n", "")
-        .replaceAll(/[-!$%^&*()_+|~=\`{}\[\]:";'<>?,.\/]/g, " ")
+    const words = text.replaceAll(BREAK_LINE_REGEXP, "")
+        .replaceAll(SPECIAL_CHARS_REGEXP, " ")
         .split(' ')
         .filter(word => word)
         .map(word => word.toLowerCase())
