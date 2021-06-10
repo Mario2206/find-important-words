@@ -25,15 +25,16 @@ class CliParser {
      * 
      * @param {{name: string, withValue: boolean}[]} conditions
      * @param {Function} actionFunction 
+     * @returns {any | Promise<any>}
      */
     action(conditions, actionFunction) {
         if(conditions.every(
             condition => this._argv.find(arg => arg.flag === condition.name && (condition.withValue ? arg.value : !arg.value))
         ) && this._allowedCall) {
-            actionFunction(
+            this._allowedCall = false
+            return actionFunction(
                 this._convertFlagsToParams(this._argv)
             )
-            this._allowedCall = false
         }
     }
 

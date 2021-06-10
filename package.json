@@ -8,6 +8,7 @@
     "jest": "^27.0.4"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node src/index.js"
   }
 }

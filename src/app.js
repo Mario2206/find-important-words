@@ -1,17 +1,40 @@
 const CliParser = require("./interfaces/cli-parser")
-const generateDictionaryOfWords = require("./utils/dictionary")
+const {generateDictionaryOfWords} = require("./utils/dictionary")
+const { displayDictionary } = require("./utils/display")
 const Logger =  require("./utils/logger")
+const FileReader = require('./utils/filereader')
 
-const app = () => {
+
+const app = async () => {
 
     const cliParser = new CliParser()
     cliParser.setArgv(process.argv)
 
+    /**
+     * Parse a text
+     */
     cliParser.action([{name: '--text', withValue: true}], function ({text}) {
         const dictionary = generateDictionaryOfWords(text)
-        Logger.log(dictionary)
+        Logger.log(displayDictionary(dictionary))
     })
 
+    /**
+     * Parse a file
+     */
+    await cliParser.action([{name: '--file', withValue: true}], async function({file}) {
+        const fileReader = new FileReader()
+        let dictionary = []
+        fileReader.setPath(file)
+        await fileReader.startStream((chunk) => {
+                dictionary = generateDictionaryOfWords(chunk, dictionary)
+        })
+        Logger.log( displayDictionary( dictionary ))
+        
+    })
+
+    /**
+     * Default redirection
+     */
     cliParser.defaultAction(function () {
         Logger.error("A text is necessary to start the parsing with --text flag")
     })
