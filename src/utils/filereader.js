@@ -26,18 +26,14 @@ class FileReader {
 
             const readable = fs.createReadStream(this._filePath, {encoding: 'utf-8'})
 
-            readable.on('data', (chunk) => {
-                harvestFunction(chunk)
-            })
+            readable.on('data', harvestFunction)
 
             readable.on('end', () => {
                 readable.close()
                 resolve()
             })
 
-            readable.on('error', (e) => {
-                reject(e)
-            })
+            readable.on('error', reject)
         })
     }
 
