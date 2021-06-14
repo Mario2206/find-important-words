@@ -41,8 +41,14 @@ describe('App', () => {
             expect(Logger.log).not.toHaveBeenCalled()
         })
 
-        
+        it("should parse a web file if the argument value is an url", async () => {
+            process.argv = ["node", "src/index","--file", "https://www.wikipedia.org/"]
+            await app()
 
+            expect(Logger.error).not.toHaveBeenCalled()
+            expect(Logger.log).toHaveBeenCalled()
+
+        })
 
     })
 

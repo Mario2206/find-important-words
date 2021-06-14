@@ -8,9 +8,11 @@ class FileReader {
     /**
      * 
      * @param {string} path 
+     * @returns {FileReader}
      */
     setPath(path) {
         this._filePath = pathSystem.resolve( path )
+        return this
     }
 
     /**
@@ -38,6 +40,8 @@ class FileReader {
             })
         })
     }
+
+
 
 
 }
