@@ -16,8 +16,8 @@ describe('App', () => {
             expect(Logger.error).not.toHaveBeenCalled()
         })
     
-        it("should display an error message if the text argument is missing", async () => {
-            process.argv = []
+        it("should display an error message if the text argument value is missing", async () => {
+            process.argv = ["node", "src/index","--text"]
             await app()
             expect(Logger.error).toHaveBeenCalled()
             expect(Logger.log).not.toHaveBeenCalled()
@@ -32,6 +32,13 @@ describe('App', () => {
             await app()
             expect(Logger.error).not.toHaveBeenCalled()
             expect(Logger.log).toHaveBeenCalled()
+        })
+
+        it("should display an error if the file argument is missing", async () => {
+            process.argv = ["node", "src/index","--file"]
+            await app()
+            expect(Logger.error).toHaveBeenCalled()
+            expect(Logger.log).not.toHaveBeenCalled()
         })
 
         

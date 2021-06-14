@@ -91,6 +91,25 @@ describe("Interfaces", () => {
             expect(defaultFakeFunction).toHaveBeenCalled()
         })
 
+        it("should wait the resolution of async action function", async () => {
+            const argv = ['node', 'src/index', '--text', "little text"]
+            let varTest = null
+            const asyncFunction = () => new Promise(reslove => {
+                setTimeout(() => {
+                    varTest = "test"
+                    reslove()
+                },50)
+            })
+            const conditionFlags = [{name: '--text', withValue: true}]
+
+
+            cliParser.setArgv(argv)
+            await cliParser.action(conditionFlags, asyncFunction)
+            
+            expect(varTest).not.toBeNull()
+
+        })
+
     })
 
 })

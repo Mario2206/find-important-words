@@ -56,7 +56,7 @@ class CliParser {
         const parsedArgv = []
         argv.forEach((arg, index) => {
             if(arg.match(FLAG_REGEXP)) {
-                let flagValue = !argv[index + 1].match(FLAG_REGEXP) && argv[index + 1]
+                let flagValue = !argv[index + 1]?.match(FLAG_REGEXP) && argv[index + 1]
                 parsedArgv.push({flag: arg, value: flagValue })
 
             }

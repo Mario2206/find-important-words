@@ -37,8 +37,6 @@ class FileReader {
                 reject(e)
             })
         })
-        
-
     }
 
 
