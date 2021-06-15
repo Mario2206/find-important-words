@@ -1,4 +1,4 @@
-# Find-most-important-words 
+# Find-most-important-words
 
 Goal: Find most important words in a text.
 
@@ -6,17 +6,16 @@ Goal: Find most important words in a text.
 
 I'm improving my skills in Clean code and I want to test me with the TDD.
 
-## Requirements 
+## Requirements
 
 Nodejs version ^15.0.0
 
-## Technologies 
+## Technologies
 
 Environment: Nodejs
 
-Test : Jest 
+Test : Jest
 
 ## Author
 
 Mathieu R.
-

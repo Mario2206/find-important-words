@@ -1,115 +1,119 @@
-const CliParser = require('../../src/interfaces/cli-parser')
+const CliParser = require('../../src/interfaces/cli-parser');
 
-describe("Interfaces", () => {
+describe('CliParser', () => {
+  let cliParser;
 
-    let cliParser;
+  beforeEach(() => {
+    cliParser = new CliParser();
+  });
 
-    beforeEach(() => {
-        cliParser = new CliParser()
-    })
+  describe('Action functions', () => {
+    it('should correctly parse the environnement args', () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      const conditionFlags = [{ flag: '--text', value: 'little text' }];
 
-    describe("CliParser", () => {
+      cliParser.setArgv(argv);
 
-        it("should correctly parse the environnement args", () => {
+      expect(cliParser.getArgv()).toEqual(
+        expect.arrayContaining([expect.objectContaining(conditionFlags[0])]),
+      );
+    });
 
-            const argv = ['node', 'src/index', '--text', "little text"]
-            const conditionFlags = [{flag: '--text', value: "little text"}]
-            
-            cliParser.setArgv(argv)
+    it('should start an action function  when the provided condition is fulfilled', () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      const fakeFunction = jest.fn();
+      const conditionFlags = [{ name: '--text', withValue: true }];
 
-            expect(cliParser.getArgv()).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining(conditionFlags[0])
-                ])
-            )
+      cliParser.setArgv(argv);
+      cliParser.action(conditionFlags, fakeFunction);
 
-        })
+      expect(fakeFunction).toHaveBeenCalled();
+    });
 
-        it("should start an action function  when the provided condition is fulfilled", () => {
-            const argv = ['node', 'src/index', '--text', "little text"]
-            const fakeFunction = jest.fn()
-            const conditionFlags = [{name: '--text', withValue: true}]
+    it("shouldn't start an action function  function if the provided condition aren't fulfilled", () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      const fakeFunction = jest.fn();
+      const conditionFlags = [{ name: '--fake', withValue: true }];
 
-            cliParser.setArgv(argv)
-            cliParser.action(conditionFlags, fakeFunction)
+      cliParser.setArgv(argv);
+      cliParser.action(conditionFlags, fakeFunction);
 
-            expect(fakeFunction).toHaveBeenCalled()
+      expect(fakeFunction).not.toHaveBeenCalled();
+    });
 
-        })
+    it("shouldn't start an action function even if the provided condition is fulfilled if an action has already been called", () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      const fakeFunction = jest.fn();
+      const fakeFunctionShouldNotBeenCalled = jest.fn();
+      const conditionFlags = [{ name: '--text', withValue: true }];
 
-        it("shouldn't start an action function  function if the provided condition aren't fulfilled", () => {
-            const argv = ['node', 'src/index', '--text', "little text"]
-            const fakeFunction = jest.fn()
-            const conditionFlags = [{name: '--fake', withValue: true}]
+      cliParser.setArgv(argv);
+      cliParser.action(conditionFlags, fakeFunction);
+      cliParser.action(conditionFlags, fakeFunctionShouldNotBeenCalled);
 
-            cliParser.setArgv(argv)
-            cliParser.action(conditionFlags, fakeFunction)
+      expect(fakeFunction).toHaveBeenCalled();
+      expect(fakeFunctionShouldNotBeenCalled).not.toHaveBeenCalled();
+    });
 
-            expect(fakeFunction).not.toHaveBeenCalled()
+    it('it should pass the flags and their values to the action function', () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      const fakeFunction = jest.fn();
+      const conditionFlags = [{ name: '--text', withValue: true }];
+      const expectedFlagArgs = { text: 'little text' };
 
-        })
+      cliParser.setArgv(argv);
+      cliParser.action(conditionFlags, fakeFunction);
 
-        it("shouldn't start an action function even if the provided condition is fulfilled if an action has already been called", () => {
-            const argv = ['node', 'src/index', '--text', "little text"]
-            const fakeFunction = jest.fn()
-            const fakeFunctionShouldNotBeenCalled = jest.fn()
-            const conditionFlags = [{name: '--text', withValue: true}]
+      expect(fakeFunction).toHaveBeenCalled();
+      expect(fakeFunction).toHaveBeenCalledWith(expectedFlagArgs);
+    });
 
-            cliParser.setArgv(argv)
-            cliParser.action(conditionFlags, fakeFunction)
-            cliParser.action(conditionFlags, fakeFunctionShouldNotBeenCalled)
+    it('should start a default function if no condition is fulfilled', () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      const defaultFakeFunction = jest.fn();
+      const wrongConditionFlags = [{ name: '--fake', withValue: true }];
 
-            expect(fakeFunction).toHaveBeenCalled()
-            expect(fakeFunctionShouldNotBeenCalled).not.toHaveBeenCalled()
+      cliParser.setArgv(argv);
+      cliParser.action(wrongConditionFlags, null);
+      cliParser.defaultAction(defaultFakeFunction);
 
-        })
+      expect(defaultFakeFunction).toHaveBeenCalled();
+    });
+  });
 
-        it("it should pass the flags to the action function", () => {
-            const argv = ['node', 'src/index', '--text', "little text"]
-            const fakeFunction = jest.fn()
-            const conditionFlags = [{name: '--text', withValue: true}]
-            const expectedFlagArgs = {text: 'little text'}
+  describe('Async action functions', () => {
+    it('should wait the resolution of async action function', async () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      let varTest = null;
+      const asyncFunction = () =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            varTest = 'test';
+            resolve();
+          }, 50);
+        });
+      const conditionFlags = [{ name: '--text', withValue: true }];
 
+      cliParser.setArgv(argv);
+      await cliParser.action(conditionFlags, asyncFunction);
 
-            cliParser.setArgv(argv)
-            cliParser.action(conditionFlags, fakeFunction)
+      expect(varTest).not.toBeNull();
+    });
+  });
 
-            expect(fakeFunction).toHaveBeenCalled()
-            expect(fakeFunction).toHaveBeenCalledWith(expectedFlagArgs)
-        })
+  describe('Optional flags', () => {
+    it("should start the action function even if the optional flag isn't provided", () => {
+      const argv = ['node', 'src/index', '--text', 'little text'];
+      const fakeFunction = jest.fn();
+      const conditionFlags = [
+        { name: '--text', withValue: true },
+        { name: '--output', withValue: true, optional: true },
+      ];
 
-        it("should start a default function if no condition is fulfilled", () => {
-            const argv = ['node', 'src/index', '--text', "little text"]
-            const defaultFakeFunction = jest.fn()
-            const wrongConditionFlags = [{name: '--fake', withValue: true}]
+      cliParser.setArgv(argv);
+      cliParser.action(conditionFlags, fakeFunction);
 
-
-            cliParser.setArgv(argv)
-            cliParser.action(wrongConditionFlags, null)
-            cliParser.defaultAction(defaultFakeFunction)
-
-            expect(defaultFakeFunction).toHaveBeenCalled()
-        })
-
-        it("should wait the resolution of async action function", async () => {
-            const argv = ['node', 'src/index', '--text', "little text"]
-            let varTest = null
-            const asyncFunction = () => new Promise(reslove => {
-                setTimeout(() => {
-                    varTest = "test"
-                    reslove()
-                },50)
-            })
-            const conditionFlags = [{name: '--text', withValue: true}]
-
-
-            cliParser.setArgv(argv)
-            await cliParser.action(conditionFlags, asyncFunction)
-            
-            expect(varTest).not.toBeNull()
-
-        })
-
-    })
-
-})
+      expect(fakeFunction).toHaveBeenCalled();
+    });
+  });
+});

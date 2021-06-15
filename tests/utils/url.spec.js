@@ -1,27 +1,21 @@
-const { isValidHttpUrl } = require("../../src/utils/url")
+const { isValidHttpUrl } = require('../../src/utils/url');
 
 describe('URL helpers', () => {
+  describe('isValidHttpUrl', () => {
+    it('should return true if the url is valid', () => {
+      const validUrl = 'http://valid.com';
 
-    describe('isValidHttpUrl', () => {
+      const res = isValidHttpUrl(validUrl);
 
-        it("should return true if the url is valid", () => {
+      expect(res).toBeTruthy();
+    });
 
-            const validUrl = "http://valid.com"
+    it("should return false it the url isn't valid", () => {
+      const invalidUrl = 'invalid';
 
-            const res = isValidHttpUrl(validUrl)
+      const res = isValidHttpUrl(invalidUrl);
 
-            expect(res).toBeTruthy()
-
-        })
-
-        it("should return false it the url isn't valid", () => {
-            const invalidUrl = "invalid"
-
-            const res = isValidHttpUrl(invalidUrl)
-
-            expect(res).toBeFalsy()
-        })
-
-    })
-
-})
+      expect(res).toBeFalsy();
+    });
+  });
+});
