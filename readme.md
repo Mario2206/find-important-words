@@ -4,7 +4,7 @@ Goal: Find most important words in a text.
 
 ## Why ?
 
-I'm improving my skills in Clean code and I want to test me with the TDD.
+I'm improving my skills in Clean code and I want to test me on TDD.
 
 ## Requirements
 
